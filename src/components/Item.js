@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import moment from "moment/moment";
+import {observer} from "mobx-react";
 
 
-class Item extends Component {
+@observer
+export default class Item extends Component {
   times = [];
 
   constructor() {
@@ -18,15 +20,15 @@ class Item extends Component {
   }
 
   render() {
-    const {item} = this.props;
+    const {item, addItem, removeItem} = this.props;
 
     return <div className="form-group row">
       <label htmlFor="inputEmail3" className="col-sm-1 col-form-label">Item</label>
       <div className="col-md-3">
-        <input type="text" className="form-control" placeholder="Name" value={item.name} onChange={this.props.onChange('name')}/>
+        <input type="text" className="form-control" placeholder="Name" value={item.name} onChange={e => item.name = e.target.value}/>
       </div>
       <div className="col-md-3">
-        <select className="form-control" name="from" onChange={this.props.onChange('from')} value={item.from}>
+        <select className="form-control" name="from" onChange={e => item.from = e.target.value} value={item.from}>
           <option>From</option>
           {this.times.map(time =>
             <option key={time.format('HH:mm')}>{time.format('HH:mm')}</option>
@@ -34,7 +36,7 @@ class Item extends Component {
         </select>
       </div>
       <div className="col-md-3">
-        <select className="form-control" name="to" onChange={this.props.onChange('to')} value={item.to}>
+        <select className="form-control" name="to" onChange={e => item.to = e.target.value} value={item.to}>
           <option>To</option>
           {this.times.map(time =>
             <option key={time.format('HH:mm')}>{time.format('HH:mm')}</option>
@@ -42,11 +44,9 @@ class Item extends Component {
         </select>
       </div>
       <div className="col-md-2">
-        <button className="btn btn-primary" onClick={this.props.addItem}>+</button>
-        <button className="btn btn-danger ml-1" onClick={this.props.removeItem}>x</button>
+        <button className="btn btn-primary" onClick={addItem}>+</button>
+        {removeItem && <button className="btn btn-danger ml-1" onClick={removeItem}>x</button>}
       </div>
     </div>;
   }
 }
-
-export default Item;
