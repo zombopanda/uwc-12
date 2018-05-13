@@ -1,12 +1,36 @@
 body {
   margin: 0;
-  padding: 0;
+  padding: 10px 0;
   font-family: sans-serif;
 }
 
 .group {
-  border: 1px solid red;
+  border: 1px solid #e4caca;
   border-radius: 2px;
   padding: 15px 15px 5px;
   margin-bottom: 10px;
+}
+
+svg {
+  background-color: white;
+}
+
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;
+  cursor: inherit;
+  display: block;
 }

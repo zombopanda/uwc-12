@@ -1,11 +1,19 @@
 import {observable} from "mobx";
 
-export class Store {
-  @observable groups = [{
-    name: '',
-    items: [{name: ''}]
-  }]
-}
+export default new class Store {
+  @observable data = [{
+    title: "Regular schedule",
+    groups: []
+  },
+  {
+    title: "Optimized schedule",
+    groups: []
+  }];
 
-const store = new Store();
-export default store;
+  addGroup = schedule => () => {
+    schedule.groups.push({
+      name: '',
+      items: [{name: '', from: '', to: ''}]
+    });
+  }
+}();

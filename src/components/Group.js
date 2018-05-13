@@ -8,39 +8,35 @@ export default class Group extends Component {
   addItem = e => {
     const {group} = this.props;
     e.preventDefault();
-    group.items = [...group.items, {name: ''}];
+    group.items = [...group.items, {name: '', from: '', to: ''}];
   };
 
-  removeItem = j => e => {
+  removeItem = i => e => {
     const {group} = this.props;
     e.preventDefault();
-    group.items = group.items.filter((item, m) => j !== m);
+    group.items = group.items.filter((item, n) => i !== n);
   };
 
   render() {
-    const {group, addGroup, removeGroup} = this.props;
+    const {group, removeGroup, previousGroup} = this.props;
 
     return <div className="group">
       <div className="form-group row">
-        <label htmlFor="inputEmail3" className="col-sm-1 col-form-label">Group</label>
-        <div className="col-md-3">
-          <input type="text" className="form-control" placeholder="Name" value={group.name} onChange={e => group.name = e.target.value}/>
+        <div className="col-4">
+          <input type="text" className="form-control" placeholder="Group name" value={group.name} onChange={e => group.name = e.target.value}/>
         </div>
+
+        {removeGroup && <div className="col-md-2">
+          <button className="btn btn-danger" onClick={removeGroup}>x</button>
+        </div>}
       </div>
       {group.items.map((item, i) =>
         <Item item={item} key={i}
+          previousItem={(i > 0 && group.items[i-1]) || (previousGroup && previousGroup.items.length && previousGroup.items[previousGroup.items.length - 1])}
           addItem={this.addItem}
-          removeItem={i > 0 && this.removeItem(i)}
+          removeItem={(group.items.length > 1 && (previousGroup || i > 0)) && this.removeItem(i)}
         />
       )}
-      <div className="form-group row">
-        <div className="col-md-2">
-          <button className="btn btn-primary" onClick={addGroup}>Add group</button>
-        </div>
-        {removeGroup && <div className="col-md-2">
-          <button className="btn btn-danger" onClick={removeGroup}>Remove group</button>
-        </div>}
-      </div>
     </div>;
   }
 }

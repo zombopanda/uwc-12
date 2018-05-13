@@ -1,54 +1,138 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
-import BarChart from "./BarChart";
-import Group from "./Group";
+import Chart from "./Chart";
 import {observer} from "mobx-react";
+import moment from "moment/moment";
+import color from "../utils/color";
+import SvgSaver from "svgsaver";
+import FileSaver from "file-saver";
+import Schedule from "./Schedule";
 
 
 @observer
 export default class App extends Component {
-  addGroup = e => {
-    const {store} = this.props;
+  svgRef = null;
+  fileRef = null;
+
+  savePng = e => {
     e.preventDefault();
-    store.groups = store.groups.concat({name: '', items: [{name: ''}]});
+    new SvgSaver().asPng(this.svgRef, `schedule-${moment().format('HH_mm_ss')}.png`);
   };
 
-  removeGroup = i => e => {
+  saveData = e => {
     const {store} = this.props;
     e.preventDefault();
-    store.groups = store.groups.filter((group, n) => n !== i);
+    const blob = new Blob([JSON.stringify(store.data)], {type: "text/plain;charset=utf-8"});
+    FileSaver.saveAs(blob, `schedule-data-${moment().format('HH_mm_ss')}.json`);
   };
 
-  process = e => {
-    e.preventDefault();
+  loadData = () => {
+    const {store} = this.props;
+    if (this.fileRef.files.length) {
+      const reader = new FileReader();
+
+      reader.onload = e => {
+        try {
+          store.data = JSON.parse(e.target.result);
+        } catch(error) {/**/}
+      };
+
+      reader.readAsText(this.fileRef.files[0]);
+    }
   };
+
+  chartData(schedule) {
+    const {groups, title} = schedule;
+    const data = {
+      groups: [],
+      items: [],
+      title
+    };
+
+    groups.forEach((group, i) => {
+      const items = group.items.filter(i => i.to);
+
+      if (!items.length) {
+        return;
+      }
+
+      const timeFrom = moment(items[0].from, 'HH:mm');
+      const timeTo = moment(items[items.length - 1].to, 'HH:mm');
+      if (items[items.length - 1].to === '00:00') {
+        timeTo.add(1, 'd');
+      }
+      const minutes = timeTo.diff(timeFrom, 'm');
+
+      if (minutes > 15) {
+        data.groups.push({
+          name: group.name,
+          from: items[0].from,
+          to: items[items.length - 1].to,
+          color: color(i, 'light'),
+          value: minutes / 15
+        });
+      }
+
+      group.items.forEach((item, j) => {
+        const timeFrom = moment(item.from, 'HH:mm');
+        const timeTo = moment(item.to, 'HH:mm');
+        if (item.to === '00:00') {
+          timeTo.add(1, 'd');
+        }
+        const minutes = timeTo.diff(timeFrom, 'm');
+
+        if (minutes >= 15) {
+          data.items.push({
+            name: item.name,
+            from: item.from,
+            to: item.to,
+            color: color(i + '-' + j),
+            value: minutes / 15
+          });
+        }
+      });
+    });
+
+    return data;
+  }
 
   render() {
-    const {groups} = this.props.store;
+    const {data, addGroup} = this.props.store;
 
     return <div className="container-fluid">
       <div className="row">
-        <div className="col col-md-10 col-lg-6">
-          <h2>Regular schedule</h2>
-
-          <form>
-            {groups.map((group, i) =>
-              <Group group={group} key={i}
-                addGroup={this.addGroup}
-                removeGroup={i > 0 && this.removeGroup(i)}
-              />
-            )}
-
-            <div className="form-group row">
-              <div className="col-sm-10">
-                <button onClick={this.process} className="btn btn-primary">Process</button>
-              </div>
+        {data.map((schedule, i) => <div className="col col-md-10 col-lg-5" key={i}>
+          <div className="row">
+            <div className="col">
+              <Schedule schedule={schedule} addGroup={addGroup(schedule)}/>
             </div>
-          </form>
+          </div>
+        </div>)}
+      </div>
+
+      <hr/>
+
+      <div className="col col-md-10 col-lg-5">
+        <div className="row">
+          <div className="col-md-2">
+            <button className="btn btn-primary btn-file">
+              Load data
+              <input type="file" ref={ref => this.fileRef = ref} onChange={this.loadData}/>
+            </button>
+          </div>
+          <div className="col-md-2">
+            <button className="btn btn-primary" onClick={this.saveData}>Save data</button>
+          </div>
+          <div className="col-md-2">
+            <button className="btn btn-primary" onClick={this.savePng}>Save .png</button>
+          </div>
         </div>
       </div>
-      <div className="row">
-        <BarChart data={[5,10,1,3]} size={[500,500]} />
+
+      <div className="row mt-4">
+        <div className="col-md-12">
+          <Chart data={data.map(schedule => this.chartData(schedule))} svgRef={ref => this.svgRef = ref}/>
+        </div>
       </div>
     </div>;
   }
