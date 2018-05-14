@@ -4,6 +4,6 @@
 ```
 yarn
 yarn build
-yarn add global serve
+yarn global add serve
 serve -s build
 ```

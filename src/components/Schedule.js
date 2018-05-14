@@ -26,11 +26,11 @@ export default class Schedule extends Component {
     const lastGroup = last(groups);
     const lastItem = lastGroup && last(lastGroup.items);
 
-    return <div>
+    return <div className="w-100">
       <h2>
         {title}
         {!lastItem || lastItem.to !== '00:00' &&
-          <button className="btn btn-primary ml-3 position-absolute" onClick={this.addGroup}>Add group</button>
+          <button className="btn btn-primary ml-3" onClick={this.addGroup}>Add group</button>
         }
       </h2>
 

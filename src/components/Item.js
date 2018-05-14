@@ -82,10 +82,10 @@ export default class Item extends Component {
     const {timeFromDisabled, timeToDisabled} = this.state;
 
     return <div className="form-group row">
-      <div className="col-4">
+      <div className="col-md-4">
         <input type="text" className="form-control" placeholder="Item name" value={item.name} onChange={e => item.name = e.target.value}/>
       </div>
-      <div className="col-3">
+      <div className="col-md-3">
         <select className="form-control" name="from" onChange={e => item.from = e.target.value} value={item.from} disabled={timeFromDisabled}>
           <option>From</option>
           {this.timesFrom.map(time =>
@@ -93,7 +93,7 @@ export default class Item extends Component {
           )}
         </select>
       </div>
-      <div className="col-3">
+      <div className="col-md-3">
         <select className="form-control" name="to" onChange={e => item.to = e.target.value} value={item.to} disabled={timeToDisabled}>
           <option>To</option>
           {this.timesTo.map(time =>
@@ -101,7 +101,7 @@ export default class Item extends Component {
           )}
         </select>
       </div>
-      <div className="col-2">
+      <div className="col-md-2">
         {item.to !== '00:00' && <button className="btn btn-primary mr-1" onClick={addItem}>+</button>}
         {removeItem && <button className="btn btn-danger" onClick={removeItem}>x</button>}
       </div>

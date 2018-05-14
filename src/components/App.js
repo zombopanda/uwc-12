@@ -101,29 +101,25 @@ export default class App extends Component {
 
     return <div className="container-fluid">
       <div className="row">
-        {data.map((schedule, i) => <div className="col col-md-10 col-lg-5" key={i}>
-          <div className="row">
-            <div className="col">
-              <Schedule schedule={schedule} addGroup={addGroup(schedule)}/>
-            </div>
-          </div>
+        {data.map((schedule, i) => <div className="col-12 col-md-10 col-lg-5" key={i}>
+          <Schedule schedule={schedule} addGroup={addGroup(schedule)}/>
         </div>)}
       </div>
 
       <hr/>
 
-      <div className="col col-md-10 col-lg-5">
+      <div className="col-12 col-md-10 col-lg-5">
         <div className="row">
-          <div className="col-md-2">
+          <div className="col-4 col-lg-2">
             <button className="btn btn-primary btn-file">
               Load data
               <input type="file" ref={ref => this.fileRef = ref} onChange={this.loadData}/>
             </button>
           </div>
-          <div className="col-md-2">
+          <div className="col-4 col-lg-2">
             <button className="btn btn-primary" onClick={this.saveData}>Save data</button>
           </div>
-          <div className="col-md-2">
+          <div className="col-4 col-lg-2">
             <button className="btn btn-primary" onClick={this.savePng}>Save .png</button>
           </div>
         </div>

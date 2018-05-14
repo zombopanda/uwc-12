@@ -22,7 +22,7 @@ export default class Group extends Component {
 
     return <div className="group">
       <div className="form-group row">
-        <div className="col-4">
+        <div className="col-md-4">
           <input type="text" className="form-control" placeholder="Group name" value={group.name} onChange={e => group.name = e.target.value}/>
         </div>
 
